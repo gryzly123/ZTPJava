@@ -5,6 +5,9 @@
  */
 package eu.kniedzwiecki.ztpj.lab02;
 
+import eu.kniedzwiecki.ztpj.lab02.entities.EPosition;
+import java.sql.SQLException;
+
 /**
  *
  * @author knied
@@ -16,6 +19,16 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		// TODO code application logic here
+		
+		try
+		{
+			EPosition p = EPosition.getPositionFromId(0);
+			System.out.println(p.toString());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e);
+		}
 	}
 	
 }
