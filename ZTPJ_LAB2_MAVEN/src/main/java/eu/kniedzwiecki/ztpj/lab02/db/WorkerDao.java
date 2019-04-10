@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.kniedzwiecki.ztpj.lab02.db;
 
 import eu.kniedzwiecki.ztpj.lab02.entities.EPosition;
@@ -21,7 +16,8 @@ import java.util.Optional;
  */
 public class WorkerDao 
 {
-	//DAO SUPPORT
+	// ------------- REQUEST QUERIES AND PREPARED STATEMENTS ------------
+	//Base Worker
 	private final static String getWorker = "SELECT * FROM workers WHERE id = ?";
 	private final static String getAllWorkerIds = "SELECT id FROM workers";
 	private final static String insertWorker = "INSERT INTO workers(first_name, last_name, pesel,"
@@ -31,18 +27,38 @@ public class WorkerDao
 											 + "position_id = ?, phone_number = ?, service_card_number = ?, salary = ?"
 											 + "WHERE id = ?";
 	private final static String deleteWorker = "DELETE FROM workers WHERE workers.id=?";
-
+	
 	private static PreparedStatement psGetWorker;
 	private static PreparedStatement psGetWorkerIds;
 	private static PreparedStatement psSaveWorker;
 	private static PreparedStatement psUpdateWorker;
 	private static PreparedStatement psDeleteWorker;
 	
+	//Director
+	private final static String getDirector = "";
+	private final static String insertDirector = "";
+	private final static String deleteDirector = "";
+	
+	private static PreparedStatement psGetDirector;
+	private static PreparedStatement psInsertDirector;
+	private static PreparedStatement psDeleteDirector;
+	
+	//Salesman
+	private final static String getSalesman = "";
+	private final static String insertSalesman = "";
+	private final static String deleteSalesman = "";
+	
+	private static PreparedStatement psGetSalesman;
+	private static PreparedStatement psInsertSalesman;
+	private static PreparedStatement psDeleteSalesman;
+	
 	//overridable methods for sql statements of Director and Salesman
 	protected void readSubclassData() { }
 	protected void updateSubclassData() { }
 	protected void deleteSubclassData() { }
 	protected void saveSubclassData() { }
+	
+	// -------------------------- DAO METHODS ----------------------------
 	
 	public static Optional<Worker> get(int id)
 	{

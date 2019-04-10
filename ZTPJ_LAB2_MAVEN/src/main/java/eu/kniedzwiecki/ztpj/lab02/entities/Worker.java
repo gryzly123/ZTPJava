@@ -39,22 +39,22 @@ public class Worker
 	
 	public void readFromStream(Scanner s)
 	{
-		System.out.print("\nImie:\t\t");
+		System.out.print("Imie:\t\t");
 		firstName = s.nextLine();
 		
-		System.out.print("\nNazwisko:\t");
+		System.out.print("Nazwisko:\t");
 		lastName = s.nextLine();
 		
-		System.out.print("\nTelefon:\t");
+		System.out.print("Telefon:\t");
 		phoneNumber = s.nextLine();
 		
-		System.out.print("\nPesel:\t\t");
+		System.out.print("Pesel:\t\t");
 		pesel = s.nextLine();
 		
-		System.out.print("\nNumer karty:\t");
+		System.out.print("Numer karty:\t");
 		serviceCardNumber = s.nextLine();
 		
-		System.out.print("\nPlaca:\t\t");
+		System.out.print("Placa:\t\t");
 		pay = s.nextInt();
 	}
 	
