@@ -1,6 +1,8 @@
 package eu.kniedzwiecki.ztpj.lab02.db;
 
+import eu.kniedzwiecki.ztpj.lab02.entities.Director;
 import eu.kniedzwiecki.ztpj.lab02.entities.EPosition;
+import eu.kniedzwiecki.ztpj.lab02.entities.Salesman;
 import eu.kniedzwiecki.ztpj.lab02.entities.Worker;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,6 +11,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -35,18 +39,22 @@ public class WorkerDao
 	private static PreparedStatement psDeleteWorker;
 	
 	//Director
-	private final static String getDirector = "";
-	private final static String insertDirector = "";
-	private final static String deleteDirector = "";
+	private final static String getDirector = "SELECT * FROM directors_allowances WHERE worker_id = ?";
+	private final static String insertDirector = "INSERT INTO "
+											+ "directors_allowances(worker_id, business_allowance, monthly_cost_limit) "
+											+ "VALUES(?, ?, ?)";;
+	private final static String deleteDirector = "DELETE FROM directors_allowances WHERE worker_id = ?";
 	
 	private static PreparedStatement psGetDirector;
 	private static PreparedStatement psInsertDirector;
 	private static PreparedStatement psDeleteDirector;
 	
 	//Salesman
-	private final static String getSalesman = "";
-	private final static String insertSalesman = "";
-	private final static String deleteSalesman = "";
+	private final static String getSalesman = "SELECT * FROM tradesmans_commissions WHERE worker_id = ?";;
+	private final static String insertSalesman = "INSERT INTO "
+											+ "tradesmans_commissions(worker_id, commission, monthly_commission_limit) "
+											+ "VALUES(?, ?, ?)";
+	private final static String deleteSalesman = "DELETE FROM tradesmans_commisions WHERE worker_id = ?";
 	
 	private static PreparedStatement psGetSalesman;
 	private static PreparedStatement psInsertSalesman;
@@ -62,16 +70,15 @@ public class WorkerDao
 	
 	public static Optional<Worker> get(int id)
 	{
-		Worker worker = null;
+		Connection c = null;
 		try
 		{
-			Connection c = DataSource.Get().bds.getConnection();
+			c = DataSource.Get().bds.getConnection();
+			Worker worker = null;
 			c.setAutoCommit(false);
 			if(psGetWorker == null) psGetWorker = c.prepareStatement(getWorker);
 			psGetWorker.setInt(1, id);
 			ResultSet result = psGetWorker.executeQuery();
-			c.commit();
-			
 			if(result.next())
 			{
 				//determine worker class
@@ -86,16 +93,48 @@ public class WorkerDao
 				worker.pay = Integer.parseInt(result.getString("salary"));
 				worker.phoneNumber = result.getString("phone_number");
 				worker.serviceCardNumber = result.getString("service_card_number");
-				
-				//worker.readSubclassData();
 			}
 			result.close();
+			//psGetWorker.close();
 			
+			switch(worker.position)
+			{
+				case Director:
+					if(psGetDirector == null) psGetDirector = c.prepareStatement(getDirector);
+					psGetDirector.setInt(1, id);
+					ResultSet result2 = psGetDirector.executeQuery();
+					if(result2.next())
+					{
+						Director d = (Director)worker;
+						d.businessAllowance = Integer.parseInt(result2.getString("business_allowance"));
+						d.monthlyCostLimit = Integer.parseInt(result2.getString("monthly_cost_limit"));
+					}
+					result2.close();
+					///psGetWorker.close();
+					break;
+					
+				case Salesman:
+					if(psGetSalesman == null) psGetSalesman = c.prepareStatement(getSalesman);
+					psGetSalesman.setInt(1, id);
+					ResultSet result3 = psGetSalesman.executeQuery();
+					if(result3.next())
+					{
+						Salesman s = (Salesman)worker;
+						s.commisionPercentage = Integer.parseInt(result3.getString("commission"));
+						s.commisionLimit = Integer.parseInt(result3.getString("monthly_commission_limit"));
+					}
+					result3.close();
+					//psGetSalesman.close();
+					break;
+			}
+			
+			c.commit();
 			return Optional.of(worker);
 		}
 		catch(Exception e) 
 		{
 			System.out.println(e);
+			try { c.rollback(); } catch (Exception ex) { }
 			return Optional.empty();
 		}
 	}
@@ -114,6 +153,7 @@ public class WorkerDao
 			while(result.next())
 				resultArray.add(get(result.getInt("id")).get());
 			result.close();
+			psGetWorkerIds.close();
 			return resultArray;
 		}
 		catch(Exception e) 
@@ -125,9 +165,10 @@ public class WorkerDao
 	
 	private static int internalSave(Worker t)
 	{
+		Connection c = null;
 		try
 		{
-			Connection c = DataSource.Get().bds.getConnection();
+			c = DataSource.Get().bds.getConnection();
 			c.setAutoCommit(false);
 			if(psSaveWorker == null) psSaveWorker = c.prepareStatement(insertWorker, PreparedStatement.RETURN_GENERATED_KEYS);
 			
@@ -140,17 +181,39 @@ public class WorkerDao
 			psSaveWorker.setString(6, t.serviceCardNumber);
 			int result = psSaveWorker.executeUpdate();
 			ResultSet rs = psSaveWorker.getGeneratedKeys();
-			c.commit();
-			
 			if(!rs.next()) throw new Exception("internalSave() sql failed");
-			result = rs.getInt(1);
+			t.id = rs.getInt(1);
 			rs.close();
+			
+			switch(t.position)
+			{
+				case Director:
+					if(psInsertDirector == null) psInsertDirector = c.prepareStatement(insertDirector);
+					psInsertDirector.setInt(1, t.id);
+					psInsertDirector.setInt(2, ((Director)t).businessAllowance);
+					psInsertDirector.setInt(3, ((Director)t).monthlyCostLimit);
+					int result2 = psInsertDirector.executeUpdate();
+					if(result2 == 0) throw new Exception("insert director sql failed");
+					break;
+					
+				case Salesman:
+					if(psInsertSalesman == null) psInsertSalesman = c.prepareStatement(insertSalesman);
+					psInsertSalesman.setInt(1, t.id);
+					psInsertSalesman.setInt(2, ((Salesman)t).commisionLimit);
+					psInsertSalesman.setInt(3, ((Salesman)t).commisionPercentage);
+					int result3 = psInsertSalesman.executeUpdate();
+					if(result3 == 0) throw new Exception("insert salesman sql failed");
+					break;
+			}
+			
+			c.commit();
 			return result;
 
 		}
 		catch(Exception e) 
 		{
 			System.out.println(e);
+			try { c.rollback(); } catch (Exception ex) { }
 			return -1;
 		}
 	}
@@ -182,20 +245,40 @@ public class WorkerDao
 	
 	private static void internalDelete(Worker t)
 	{
+		Connection c = null;
 		try
 		{
-			Connection c = DataSource.Get().bds.getConnection();
+			c = DataSource.Get().bds.getConnection();
 			c.setAutoCommit(false);
 			if(psDeleteWorker == null) psDeleteWorker = c.prepareStatement(deleteWorker);
 	
 			psDeleteWorker.setInt(1, t.id);
 			int result = psDeleteWorker.executeUpdate();
+			
+			switch(t.position)
+			{
+				case Director:
+					if(psDeleteDirector == null) psDeleteDirector = c.prepareStatement(deleteDirector);
+					psDeleteDirector.setInt(1, t.id);
+					int result2 = psInsertDirector.executeUpdate();
+					if(result2 == 0) throw new Exception("delete director sql failed");
+					break;
+					
+				case Salesman:
+					if(psDeleteSalesman == null) psDeleteSalesman = c.prepareStatement(deleteSalesman);
+					psDeleteSalesman.setInt(1, t.id);
+					int result3 = psDeleteSalesman.executeUpdate();
+					if(result3 == 0) throw new Exception("delete salesman sql failed");
+					break;
+			}
+			
 			c.commit();
 			if(result == 0) throw new Exception("internalDelete() sql failed");
 		}
 		catch(Exception e) 
 		{
 			System.out.println(e);
+			try { c.rollback(); } catch (Exception ex) { }
 		}
 	}
 	

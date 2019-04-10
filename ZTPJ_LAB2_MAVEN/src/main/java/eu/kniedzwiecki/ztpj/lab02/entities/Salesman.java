@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Salesman extends Worker
 {
-	private int commisionPercentage, commisionLimit;
+	public int commisionPercentage, commisionLimit;
 	
 	public Salesman()
 	{

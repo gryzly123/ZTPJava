@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Director extends Worker
 {
-	private int businessAllowance, monthlyCostLimit;
+	public int businessAllowance, monthlyCostLimit;
 	
 	public Director()
 	{

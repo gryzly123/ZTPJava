@@ -80,11 +80,16 @@ public class Main {
 	private static void AddWorker()
 	{
 		s.nextLine();
-		System.out.print("Typ > ");
-		String workerType = workerType = s.nextLine();
+		System.out.print("Typ: [P]racownik, [D]yrektor, [H]andlowiec > ");
+		String workerType = s.nextLine();
 		try
 		{
-			EPosition pos = EPosition.fromString(workerType);
+			EPosition pos = EPosition.BaseWorker;
+			switch(workerType)
+			{
+				case "d": pos = EPosition.Director; break;
+				case "h": pos = EPosition.Salesman; break;
+			}
 			Worker w = EPosition.createWorkerFromPosition(pos);
 			w.readFromStream(s);
 			WorkerDao.save(w);
