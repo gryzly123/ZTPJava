@@ -6,6 +6,7 @@
 package eu.kniedzwiecki.ztpj.lab02;
 
 import eu.kniedzwiecki.ztpj.lab02.db.DataSource;
+import eu.kniedzwiecki.ztpj.lab02.db.WorkerDao;
 import eu.kniedzwiecki.ztpj.lab02.entities.EPosition;
 import eu.kniedzwiecki.ztpj.lab02.entities.Worker;
 import java.sql.PreparedStatement;
@@ -25,7 +26,7 @@ public class Main {
 	public static void main(String[] args)
 	{
 		s = new Scanner(System.in);
-		int selection = 1;
+		int selection = 0;
 		do 
 		{
 			System.out.println("\n\nMENU");
@@ -35,7 +36,7 @@ public class Main {
 			System.out.println("  4: kopia zapasowa");
 			System.out.println("  5: zamknij aplikacje");
 			System.out.print("Wybór > ");
-//			selection = s.nextInt();
+			selection = s.nextInt();
 			switch(selection)
 			{
 				case 1:
@@ -56,35 +57,6 @@ public class Main {
 			}
 		}
 		while(selection != 4);
-
-		
-		
-		
-		//try
-		//{
-		//	PreparedStatement ps = ds.bds.getConnection().prepareStatement("SELECT * FROM workers");
-		//	ResultSet rs = ps.executeQuery();
-		//	while(rs.next())
-		//	{
-		//		System.out.println(rs.getString("first_name"));
-		//	}
-		//}
-		//catch(Exception e)
-		//{
-		//	System.out.println(e);
-		//}
-		
-		/*
-		try
-		{
-			EPosition p = EPosition.getPositionFromId(0);
-			System.out.println(p.toString());
-		}
-		catch(Exception e)
-		{
-			System.out.println(e);
-		}
-*/
 	}
 
 	private static void ListWorkers()
@@ -92,11 +64,11 @@ public class Main {
 		DataSource ds = DataSource.Get();
 		try
 		{
-			List<Worker> workers = Worker.getAll();
+			List<Worker> workers = WorkerDao.getAll();
 			for(Worker w : workers)
 			{
 				System.out.println((w == null) ? "internal error" : w.toString() + "\n\n");
-				//System.in.read();
+				System.in.read();
 			}
 		}
 		catch(Exception e)
@@ -108,13 +80,14 @@ public class Main {
 	private static void AddWorker()
 	{
 		s.nextLine();
+		System.out.print("Typ > ");
 		String workerType = workerType = s.nextLine();
 		try
 		{
 			EPosition pos = EPosition.fromString(workerType);
 			Worker w = EPosition.createWorkerFromPosition(pos);
 			w.readFromStream(s);
-			Worker.save(w);
+			WorkerDao.save(w);
 		}
 		catch(Exception e)
 		{
@@ -122,11 +95,28 @@ public class Main {
 		}
 	}
 
-	private static void RemoveWorker() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	private static void RemoveWorker()
+	{
+		System.out.print("ID do usuniecia > ");
+		int id = s.nextInt();
+		Worker w = WorkerDao.get(id).orElse(null);
+		if(w == null)
+		{
+			System.out.println("Nie znaleziono pracownika o takim id");
+		}
+		try
+		{
+			WorkerDao.delete(w);
+			System.out.println("Usunieto");
+		}
+		catch(Exception e)
+		{
+			System.out.println("Error deleting worker:" + e.toString());
+		}
 	}
 
-	private static void Backup() {
+	private static void Backup()
+	{
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 	
