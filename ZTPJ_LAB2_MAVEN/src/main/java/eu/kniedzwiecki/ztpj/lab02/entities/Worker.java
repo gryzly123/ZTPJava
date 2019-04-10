@@ -1,4 +1,5 @@
 package eu.kniedzwiecki.ztpj.lab02.entities;
+
 import eu.kniedzwiecki.ztpj.lab02.db.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -7,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Scanner;
 
 public class Worker
 {
@@ -35,6 +37,26 @@ public class Worker
 				+ EPosition.toString(position);				
 	}
 	
+	public void readFromStream(Scanner s)
+	{
+		System.out.print("\nImie:\t\t");
+		firstName = s.nextLine();
+		
+		System.out.print("\nNazwisko:\t");
+		lastName = s.nextLine();
+		
+		System.out.print("\nTelefon:\t");
+		phoneNumber = s.nextLine();
+		
+		System.out.print("\nPesel:\t\t");
+		pesel = s.nextLine();
+		
+		System.out.print("\nNumer karty:\t");
+		serviceCardNumber = s.nextLine();
+		
+		System.out.print("\nPlaca:\t\t");
+		pay = s.nextInt();
+	}
 	
 	protected Worker(EPosition _position)
 	{
@@ -50,10 +72,19 @@ public class Worker
 	private final static String getWorker = "SELECT * FROM workers WHERE id = ?";
 	private final static String getAllWorkerIds = "SELECT id FROM workers";
 	private final static String insertWorker = "INSERT INTO workers(first_name, last_name, pesel,"
-											+ "position_id, phone_number, service_card_number, salary) "
-											+ "VALUES(?,?,?,?,?,?,?) returning id";
-	private final static String deleteWorker = null;
+											 + "position_id, phone_number, service_card_number, salary) "
+											 + "VALUES(?,?,?,?,?,?,?) returning id";
+	private final static String updateWorker = "UPDATE workers SET first_name = ?, last_name = ?, pesel = ?,"
+											 + "position_id = ?, phone_number = ?, service_card_number = ?, salary = ?"
+											 + "WHERE id = ?";
+	private final static String deleteWorker = "DELETE FROM workers WHERE id = ?";
 
+	private static PreparedStatement psGetWorker;
+	private static PreparedStatement psGetWorkerIds;
+	private static PreparedStatement psSaveWorker;
+	private static PreparedStatement psUpdateWorker;
+	private static PreparedStatement psDeleteWorker;
+	
 	//overridable methods for sql statements of Director and Salesman
 	protected void readSubclassData() { }
 	protected void updateSubclassData() { }
@@ -67,7 +98,7 @@ public class Worker
 		{
 			Connection c = DataSource.Get().bds.getConnection();
 			c.setAutoCommit(false);
-			PreparedStatement psGetWorker = c.prepareStatement(getWorker);
+			if(psGetWorker == null) psGetWorker = c.prepareStatement(getWorker);
 			psGetWorker.setInt(1, id);
 			ResultSet result = psGetWorker.executeQuery();
 			c.commit();
@@ -86,11 +117,11 @@ public class Worker
 				worker.pay = Integer.parseInt(result.getString("salary"));
 				worker.phoneNumber = result.getString("phone_number");
 				worker.serviceCardNumber = result.getString("service_card_number");
-				worker.lastName = result.getString("last_name");
-				worker.lastName = result.getString("last_name");
 				
 				worker.readSubclassData();
 			}
+			result.close();
+			
 			return Optional.of(worker);
 		}
 		catch(Exception e) 
@@ -106,13 +137,14 @@ public class Worker
 		try
 		{
 			Connection c = DataSource.Get().bds.getConnection();
-			c.setAutoCommit(false);
-			PreparedStatement psGetWorkerIds = c.prepareStatement(getAllWorkerIds);
+			c.setAutoCommit(true);
+			if(psGetWorkerIds == null) psGetWorkerIds = c.prepareStatement(getAllWorkerIds);
 			ResultSet result = psGetWorkerIds.executeQuery();
-			c.commit();
+			//c.commit();
 			
 			while(result.next())
 				resultArray.add(get(result.getInt("id")).get());
+			result.close();
 			return resultArray;
 		}
 		catch(Exception e) 
@@ -122,20 +154,98 @@ public class Worker
 		}
 	}
 	
+	private static int internalSave(Worker t)
+	{
+		try
+		{
+			Connection c = DataSource.Get().bds.getConnection();
+			c.setAutoCommit(false);
+			if(psSaveWorker == null) psSaveWorker = c.prepareStatement(insertWorker);
+			
+			psSaveWorker.setString(1, t.firstName);
+			psSaveWorker.setString(2, t.lastName);
+			psSaveWorker.setString(3, t.pesel);
+			psSaveWorker.setInt   (4, EPosition.getIdFromPosition(t.position));
+			psSaveWorker.setInt   (7, t.pay);
+			psSaveWorker.setString(5, t.phoneNumber);
+			psSaveWorker.setString(6, t.serviceCardNumber);
+			ResultSet rs = psSaveWorker.executeQuery();
+			c.commit();
+			
+			if(!rs.next()) throw new Exception("internalSave() sql failed");
+			int result = rs.getInt(1);
+			rs.close();
+			return result;
+
+		}
+		catch(Exception e) 
+		{
+			System.out.println(e);
+			return -1;
+		}
+	}
+	
+	private static void internalUpdate(Worker t)
+	{
+		try
+		{
+			Connection c = DataSource.Get().bds.getConnection();
+			c.setAutoCommit(false);
+			if(psUpdateWorker == null) psUpdateWorker = c.prepareStatement(updateWorker);
+			
+			psUpdateWorker.setString(1, t.firstName);
+			psUpdateWorker.setString(2, t.lastName);
+			psUpdateWorker.setString(3, t.pesel);
+			psUpdateWorker.setInt   (4, EPosition.getIdFromPosition(t.position));
+			psUpdateWorker.setInt   (5, t.pay);
+			psUpdateWorker.setString(6, t.phoneNumber);
+			psUpdateWorker.setString(7, t.serviceCardNumber);
+			psUpdateWorker.setInt   (8, t.id);
+			if(psUpdateWorker.executeUpdate() == 0) throw new Exception("internalUpdate() sql failed");
+			c.commit();
+		}
+		catch(Exception e) 
+		{
+			System.out.println(e);
+		}
+	}
+	
+	private static void internalDelete(Worker t)
+	{
+		try
+		{
+			Connection c = DataSource.Get().bds.getConnection();
+			c.setAutoCommit(false);
+			if(psDeleteWorker == null) psDeleteWorker = c.prepareStatement(deleteWorker);
+	
+			psDeleteWorker.setInt(1, t.id);
+			if(!psDeleteWorker.execute()) throw new Exception("internalDelete() sql failed");
+			c.commit();
+		}
+		catch(Exception e) 
+		{
+			System.out.println(e);
+		}
+	}
+	
 	public static void save(Worker t) throws SQLException
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if(t.id > -1) throw new SQLException("Can't save, user already exists!");
+		Connection c = DataSource.Get().bds.getConnection();
+		internalSave(t);
 	}
-
 	
 	public static void update(Worker t, String[] params) throws SQLException
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if(t.id < 0) throw new SQLException("Can't update, user doesn't exist in db yet!");
+		Connection c = DataSource.Get().bds.getConnection();
+		internalUpdate(t);
 	}
-
 	
-	public static void delete(Worker t) throws SQLException
+	public static void delete(Worker t) throws SQLException, Exception
 	{
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if(t.id < 0) throw new SQLException("Can't delete, user doesn't exist in db yet!");
+		Connection c = DataSource.Get().bds.getConnection();
+		internalDelete(t);
 	}
 }

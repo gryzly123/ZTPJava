@@ -38,11 +38,13 @@ public enum EPosition
 		throw new Exception("invalid position string value");
 	}
 	
-	private static Map<Integer, String> sqlPositions;
+	private static Map<Integer, String> sqlPositionsId;
+	private static Map<String, Integer> sqlPositionsStr;
 	public static EPosition getPositionFromId(int id) throws SQLException, Exception
 	{
-		if(sqlPositions == null) sqlPositions = new HashMap<>();
-		if(!sqlPositions.containsKey(id))
+		if(sqlPositionsId == null) sqlPositionsId = new HashMap<>();
+		if(sqlPositionsStr == null) sqlPositionsStr = new HashMap<>();
+		if(!sqlPositionsId.containsKey(id))
 		{
 			Connection c = DataSource.Get().bds.getConnection();
 			c.setAutoCommit(false);
@@ -50,12 +52,36 @@ public enum EPosition
 			ResultSet result = getPositions.executeQuery();
 			while(result.next())
 			{
-				sqlPositions.put(result.getInt("id"), result.getString("name"));
+				sqlPositionsId.put(result.getInt("id"), result.getString("name"));
+				sqlPositionsStr.put(result.getString("name"), result.getInt("id"));
 			}
+			result.close();
 		}
 		
-		if(!sqlPositions.containsKey(id)) throw new SQLException("Position not found!");
-		return fromString(sqlPositions.get(id));
+		if(!sqlPositionsId.containsKey(id)) throw new SQLException("Position not found!");
+		return fromString(sqlPositionsId.get(id));
+	}
+	
+	public static int getIdFromPosition(EPosition pos) throws SQLException, Exception
+	{
+		if(sqlPositionsId == null) sqlPositionsId = new HashMap<>();
+		if(sqlPositionsStr == null) sqlPositionsStr = new HashMap<>();
+		if(!sqlPositionsStr.containsKey(toString(pos)))
+		{
+			Connection c = DataSource.Get().bds.getConnection();
+			c.setAutoCommit(false);
+			PreparedStatement getPositions = c.prepareStatement("SELECT * FROM positions");
+			ResultSet result = getPositions.executeQuery();
+			while(result.next())
+			{
+				sqlPositionsId.put(result.getInt("id"), result.getString("name"));
+				sqlPositionsStr.put(result.getString("name"), result.getInt("id"));
+			}
+			result.close();
+		}
+		
+		if(!sqlPositionsStr.containsKey(toString(pos))) throw new SQLException("Position not found!");
+		return sqlPositionsStr.get(toString(pos));
 	}
 	
 	public static Worker createWorkerFromPosition(EPosition position)

@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  *
@@ -19,25 +20,45 @@ import java.util.List;
  */
 public class Main {
 
-	/**
-	 * @param args the command line arguments
-	 */
-	public static void main(String[] args) {
-		// TODO code application logic here
-		
-		System.out.println("begin");
-		DataSource ds = DataSource.Get();
-		
-		try
+	static Scanner s;
+	
+	public static void main(String[] args)
+	{
+		s = new Scanner(System.in);
+		int selection = 1;
+		do 
 		{
-			List<Worker> workers = Worker.getAll();
-			for(Worker w : workers)
-				System.out.println((w == null) ? "internal error" : w.toString() + "\n\n");
+			System.out.println("\n\nMENU");
+			System.out.println("  1: lista pracownikow");
+			System.out.println("  2: dodaj pracownika");
+			System.out.println("  3: usun pracownika");
+			System.out.println("  4: kopia zapasowa");
+			System.out.println("  5: zamknij aplikacje");
+			System.out.print("Wybór > ");
+//			selection = s.nextInt();
+			switch(selection)
+			{
+				case 1:
+					ListWorkers();
+					break;
+				case 2:
+					AddWorker();
+					break;
+				case 3:
+					RemoveWorker();
+					break;
+				case 4:
+					Backup();
+				case 5:
+					return;
+				default:
+					System.out.println("invalid option");
+			}
 		}
-		catch(Exception e)
-		{
-			System.out.println(e);
-		}
+		while(selection != 4);
+
+		
+		
 		
 		//try
 		//{
@@ -64,6 +85,49 @@ public class Main {
 			System.out.println(e);
 		}
 */
+	}
+
+	private static void ListWorkers()
+	{
+		DataSource ds = DataSource.Get();
+		try
+		{
+			List<Worker> workers = Worker.getAll();
+			for(Worker w : workers)
+			{
+				System.out.println((w == null) ? "internal error" : w.toString() + "\n\n");
+				//System.in.read();
+			}
+		}
+		catch(Exception e)
+		{
+			System.out.println(e);
+		}
+	}
+
+	private static void AddWorker()
+	{
+		s.nextLine();
+		String workerType = workerType = s.nextLine();
+		try
+		{
+			EPosition pos = EPosition.fromString(workerType);
+			Worker w = EPosition.createWorkerFromPosition(pos);
+			w.readFromStream(s);
+			Worker.save(w);
+		}
+		catch(Exception e)
+		{
+			System.out.println("Error adding worker: " + e.toString());
+		}
+	}
+
+	private static void RemoveWorker() {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
+
+	private static void Backup() {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 	
 }
