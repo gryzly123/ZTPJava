@@ -54,7 +54,7 @@ public class WorkerDao
 	private final static String insertSalesman = "INSERT INTO "
 											+ "tradesmans_commissions(worker_id, commission, monthly_commission_limit) "
 											+ "VALUES(?, ?, ?)";
-	private final static String deleteSalesman = "DELETE FROM tradesmans_commisions WHERE worker_id = ?";
+	private final static String deleteSalesman = "DELETE FROM tradesmans_commissions WHERE worker_id = ?";
 	
 	private static PreparedStatement psGetSalesman;
 	private static PreparedStatement psInsertSalesman;
@@ -260,7 +260,7 @@ public class WorkerDao
 				case Director:
 					if(psDeleteDirector == null) psDeleteDirector = c.prepareStatement(deleteDirector);
 					psDeleteDirector.setInt(1, t.id);
-					int result2 = psInsertDirector.executeUpdate();
+					int result2 = psDeleteDirector.executeUpdate();
 					if(result2 == 0) throw new Exception("delete director sql failed");
 					break;
 					
