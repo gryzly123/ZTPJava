@@ -144,16 +144,16 @@ public class WorkerDao
 		List<Worker> resultArray = new ArrayList<>();
 		try
 		{
-			Connection c = DataSource.Get().bds.getConnection();
-			c.setAutoCommit(false);
+			Connection c = DataSource.Get().getC();
+			c.setAutoCommit(true);
 			if(psGetWorkerIds == null) psGetWorkerIds = c.prepareStatement(getAllWorkerIds);
 			ResultSet result = psGetWorkerIds.executeQuery();
-			c.commit();
+			//c.commit();
 			
 			while(result.next())
 				resultArray.add(get(result.getInt("id")).get());
 			result.close();
-			psGetWorkerIds.close();
+			//psGetWorkerIds.close();
 			return resultArray;
 		}
 		catch(Exception e) 
