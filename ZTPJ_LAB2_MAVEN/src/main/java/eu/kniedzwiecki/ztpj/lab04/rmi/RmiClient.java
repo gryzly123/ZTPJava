@@ -7,6 +7,9 @@ import java.rmi.*;
 import java.rmi.registry.*;
 import java.util.List;
 
+//cd C:\Users\knied\Desktop\java\lab02\ZTPJ_LAB2_MAVEN\target\classes
+//start rmiregistry
+
 public class RmiClient 
 {
 	Authenticator remoteAuth;
@@ -35,5 +38,4 @@ public class RmiClient
 		if(remoteWf == null) return null;
 		return remoteWf.getAllWorkers(sessionToken);
 	}
-	
 }

@@ -26,19 +26,6 @@ public class RmiServer
 		System.setProperty("java.security.policy","file:/rmi.policy");
 		r = LocateRegistry.createRegistry(1112);
 		
-		//Nie crashuje, ale klient nie znajduje tego lookupem
-		
-		//Naming.rebind("rmi://127.0.0.1:1112/auth", a);
-		//Naming.rebind("rmi://127.0.0.1:1112/wf", wf);	
-		
-		//Crashuje (oba warianty):
-		
-		//java.rmi.ConnectException: Connection refused to host: 192.168.56.1; nested exception is: 
-		//		java.net.ConnectException: Connection refused: connect
-		
-		//Naming.rebind("//127.0.0.1/auth", a );
-		//Naming.rebind("//127.0.0.1/wf",   wf);
-		
 		Naming.rebind("auth", a );
 		Naming.rebind("wf",   wf);
 	}	
