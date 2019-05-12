@@ -21,6 +21,7 @@ public class Authenticator extends UnicastRemoteObject implements IAuthenticator
 	
 	public Authenticator() throws RemoteException
 	{
+		super();
 		Users.put("krzysztof", "pwd");
 	}
 	

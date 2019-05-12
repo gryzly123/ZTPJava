@@ -17,7 +17,6 @@ public class RmiClient
 	
 	public RmiClient() throws RemoteException, NotBoundException
 	{
-		//Registry r = LocateRegistry.getRegistry("localhost", 1113);
 		Registry r = LocateRegistry.getRegistry("127.0.0.1", 1112);
 		
 		remoteAuth = (Authenticator) r.lookup("rmi://127.0.0.1:1112/auth");

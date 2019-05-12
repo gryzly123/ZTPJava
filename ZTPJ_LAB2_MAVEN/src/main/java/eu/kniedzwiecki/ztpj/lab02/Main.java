@@ -28,7 +28,7 @@ public class Main {
 	static RmiServer rmiServer;
 	static RmiClient rmiClient;
 	
-	public static void main(String[] args) throws IOException
+	public static void main(String[] args) throws Exception
 	{
 		s = new Scanner(System.in);
 		
@@ -37,10 +37,11 @@ public class Main {
 		if(selection == 1)
 		{
 			//sd = new ServerDaemon();
-			thr = new Thread(sd);
-			thr.start();
-			try { rmiServer = new RmiServer(); }
-			catch(MalformedURLException | RemoteException | AlreadyBoundException e) { System.out.println(e.toString()); }
+			//thr = new Thread(sd);
+			//thr.start();
+			rmiServer = new RmiServer();
+//			try { rmiServer = new RmiServer(); }
+//			catch(Exception e) { System.out.println(e.toString()); }
 		}
 		
 		do 

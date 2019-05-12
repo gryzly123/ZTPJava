@@ -8,6 +8,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.concurrent.TimeUnit;
 
 public class RmiServer 
 {
@@ -15,18 +16,31 @@ public class RmiServer
 	final WorkerFetch wf;
 	final Registry r;
 	
-	public RmiServer() throws RemoteException, MalformedURLException, AlreadyBoundException
+	public RmiServer() throws RemoteException, MalformedURLException, AlreadyBoundException, InterruptedException
 	{
 		a  = new Authenticator();
 		wf = new WorkerFetch(a);
 		
 		System.setProperty("java.rmi.server.hostname", "127.0.0.1");
+		System.setProperty(" java.rmi.server.ignoreStubClasses ", "true");
+		TimeUnit.SECONDS.sleep(1);
 		r = LocateRegistry.createRegistry(1112);
+		TimeUnit.SECONDS.sleep(1);
 		
-		//UnicastRemoteObject.exportObject(a, 0);
-		//UnicastRemoteObject.exportObject(wf, 0);
+		//Nie crashuje, ale klient nie znajduje tego lookupem
 		
-		Naming.bind("rmi://127.0.0.1:1112/auth", a);
-		Naming.bind("rmi://127.0.0.1:1112/wf", wf);	
+		Naming.rebind("rmi://127.0.0.1:1112/auth", a);
+		Naming.rebind("rmi://127.0.0.1:1112/wf", wf);	
+		
+		//Crashuje (oba warianty):
+		
+		//java.rmi.ConnectException: Connection refused to host: 192.168.56.1; nested exception is: 
+		//		java.net.ConnectException: Connection refused: connect
+		
+		//Naming.rebind("//127.0.0.1/auth", a );
+		//Naming.rebind("//127.0.0.1/wf",   wf);
+		
+		//Naming.rebind("auth", a );
+		//Naming.rebind("wf",   wf);
 	}	
 }

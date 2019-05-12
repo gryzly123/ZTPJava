@@ -17,6 +17,7 @@ public class WorkerFetch extends UnicastRemoteObject implements IWorkerFetch
 	
 	public WorkerFetch(Authenticator _a) throws RemoteException
 	{
+		super();
 		a = _a;
 	}
 
