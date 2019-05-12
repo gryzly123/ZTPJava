@@ -23,14 +23,13 @@ public class RmiServer
 		
 		System.setProperty("java.rmi.server.hostname", "127.0.0.1");
 		System.setProperty(" java.rmi.server.ignoreStubClasses ", "true");
-		TimeUnit.SECONDS.sleep(1);
+		System.setProperty("java.security.policy","file:/rmi.policy");
 		r = LocateRegistry.createRegistry(1112);
-		TimeUnit.SECONDS.sleep(1);
 		
 		//Nie crashuje, ale klient nie znajduje tego lookupem
 		
-		Naming.rebind("rmi://127.0.0.1:1112/auth", a);
-		Naming.rebind("rmi://127.0.0.1:1112/wf", wf);	
+		//Naming.rebind("rmi://127.0.0.1:1112/auth", a);
+		//Naming.rebind("rmi://127.0.0.1:1112/wf", wf);	
 		
 		//Crashuje (oba warianty):
 		
@@ -40,7 +39,7 @@ public class RmiServer
 		//Naming.rebind("//127.0.0.1/auth", a );
 		//Naming.rebind("//127.0.0.1/wf",   wf);
 		
-		//Naming.rebind("auth", a );
-		//Naming.rebind("wf",   wf);
+		Naming.rebind("auth", a );
+		Naming.rebind("wf",   wf);
 	}	
 }
