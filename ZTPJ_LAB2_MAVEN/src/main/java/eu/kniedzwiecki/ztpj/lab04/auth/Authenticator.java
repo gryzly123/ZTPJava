@@ -4,7 +4,7 @@ import java.rmi.server.*;
 import java.time.Instant;
 import java.util.*;
 
-public class Authenticator implements IAuthenticator 
+public class Authenticator extends UnicastRemoteObject implements IAuthenticator 
 {
 	public class Token
 	{
@@ -19,7 +19,7 @@ public class Authenticator implements IAuthenticator
 	private final Map<UUID, Token> Tokens = new HashMap<>();
 	private final int TokenLifeLengthSeconds = 2*60;
 	
-	public Authenticator()
+	public Authenticator() throws RemoteException
 	{
 		Users.put("krzysztof", "pwd");
 	}

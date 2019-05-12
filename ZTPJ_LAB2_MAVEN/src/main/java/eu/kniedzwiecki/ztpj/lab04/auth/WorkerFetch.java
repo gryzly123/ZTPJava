@@ -11,11 +11,11 @@ import java.util.List;
  *
  * @author knied
  */
-public class WorkerFetch implements IWorkerFetch
+public class WorkerFetch extends UnicastRemoteObject implements IWorkerFetch
 {
 	private final Authenticator a;
 	
-	public WorkerFetch(Authenticator _a)
+	public WorkerFetch(Authenticator _a) throws RemoteException
 	{
 		a = _a;
 	}

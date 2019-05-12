@@ -18,10 +18,10 @@ public class RmiClient
 	public RmiClient() throws RemoteException, NotBoundException
 	{
 		//Registry r = LocateRegistry.getRegistry("localhost", 1113);
-		Registry r = LocateRegistry.getRegistry("localhost", 1112);
+		Registry r = LocateRegistry.getRegistry("127.0.0.1", 1112);
 		
-		remoteAuth = (Authenticator) r.lookup("//127.0.0.1:1112/auth");
-		remoteWf   = (WorkerFetch)   r.lookup("//127.0.0.1:1112/wf");
+		remoteAuth = (Authenticator) r.lookup("rmi://127.0.0.1:1112/auth");
+		remoteWf   = (WorkerFetch)   r.lookup("rmi://127.0.0.1:1112/wf");
 	}
 	
 	public boolean Login(String username, String password) throws RemoteException

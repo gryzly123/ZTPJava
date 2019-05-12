@@ -11,6 +11,7 @@ import eu.kniedzwiecki.ztpj.lab02.entities.*;
 import eu.kniedzwiecki.ztpj.lab04.rmi.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;
@@ -39,7 +40,7 @@ public class Main {
 			thr = new Thread(sd);
 			thr.start();
 			try { rmiServer = new RmiServer(); }
-			catch(MalformedURLException | RemoteException e) { System.out.println(e.toString()); }
+			catch(MalformedURLException | RemoteException | AlreadyBoundException e) { System.out.println(e.toString()); }
 		}
 		
 		do 
@@ -188,9 +189,7 @@ public class Main {
 			
 		} catch (RemoteException ex) {
 			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (NotBoundException ex) {
-			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (IOException ex) {
+		} catch (NotBoundException | IOException ex) {
 			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
 		}
 	}
