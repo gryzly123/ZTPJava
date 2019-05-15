@@ -1,16 +1,10 @@
 package eu.kniedzwiecki.ztpj.lab04.rmi;
 
 import eu.kniedzwiecki.ztpj.lab02.entities.Worker;
-import eu.kniedzwiecki.ztpj.lab04.auth.Authenticator;
-import eu.kniedzwiecki.ztpj.lab04.auth.IAuthenticator;
-import eu.kniedzwiecki.ztpj.lab04.auth.IWorkerFetch;
-import eu.kniedzwiecki.ztpj.lab04.auth.WorkerFetch;
+import eu.kniedzwiecki.ztpj.lab04.auth.*;
 import java.rmi.*;
 import java.rmi.registry.*;
 import java.util.List;
-
-//cd C:\Users\knied\Desktop\java\lab02\ZTPJ_LAB2_MAVEN\target\classes
-//start rmiregistry
 
 public class RmiClient 
 {
@@ -20,10 +14,7 @@ public class RmiClient
 	
 	public RmiClient() throws RemoteException, NotBoundException
 	{
-		//System.setProperty("java.security.policy","file:/rmi.policy");
-		
 		Registry r = LocateRegistry.getRegistry(RmiServer.rmiHost, RmiServer.rmiPort);
-		
 		remoteAuth = (IAuthenticator) r.lookup("auth");
 		remoteWf   = (IWorkerFetch)   r.lookup("wf");
 	}

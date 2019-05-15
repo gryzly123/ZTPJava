@@ -36,13 +36,17 @@ public class Main {
 		int selection = s.nextInt();
 		if(selection == 1)
 		{
-			//sd = new ServerDaemon();
-			//thr = new Thread(sd);
-			//thr.start();
-			try { rmiServer = new RmiServer(); }
-			catch(Exception e) { System.out.println(e.toString()); System.exit(0); }
-//			try { rmiServer = new RmiServer(); }
-//			catch(Exception e) { System.out.println(e.toString()); }
+			try 
+			{
+				sd = new ServerDaemon();
+				thr = new Thread(sd);
+				thr.start();
+				rmiServer = new RmiServer(); 
+			}
+			catch(Exception e) 
+			{
+				System.out.println(e.toString()); System.exit(0); 
+			}
 		}
 		
 		do 
@@ -207,5 +211,4 @@ public class Main {
 			System.exit(0);
 		}
 	}
-	
 }
