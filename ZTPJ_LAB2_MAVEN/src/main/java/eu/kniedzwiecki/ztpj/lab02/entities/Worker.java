@@ -1,7 +1,8 @@
 package eu.kniedzwiecki.ztpj.lab02.entities;
+import java.io.Serializable;
 import java.util.Scanner;
 
-public class Worker
+public class Worker implements Serializable
 {
 	//these should be private but this is a school assignment and time is of essence
 	public String pesel, firstName, lastName, phoneNumber, serviceCardNumber;

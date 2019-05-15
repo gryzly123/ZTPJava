@@ -16,7 +16,7 @@ public class Authenticator extends UnicastRemoteObject implements IAuthenticator
 	}
 	
 	private final Map<String, String> Users = new HashMap<>();
-	private final Map<UUID, Token> Tokens = new HashMap<>();
+	private final Map<String, Token> Tokens = new HashMap<>();
 	private final int TokenLifeLengthSeconds = 2*60;
 	
 	public Authenticator() throws RemoteException
@@ -25,7 +25,12 @@ public class Authenticator extends UnicastRemoteObject implements IAuthenticator
 		Users.put("krzysztof", "pwd");
 	}
 	
-	public Token getTokenData(String token) { return Tokens.get(token); }
+	public Token getTokenData(String token)
+	{ 
+		//UUID token_uuid = UUID.fromString(token);
+		Token t = Tokens.get(token);
+		return t;
+	}
 	
 	@Override
 	public String authenticate(String username, String password) throws RemoteException
@@ -37,9 +42,9 @@ public class Authenticator extends UnicastRemoteObject implements IAuthenticator
 		Token t = new Token();
 		t.User = username;
 		t.ExpDate = Instant.now();
-		t.ExpDate.plusSeconds(TokenLifeLengthSeconds);
+		t.ExpDate = t.ExpDate.plusSeconds(TokenLifeLengthSeconds);
 		UUID tokenUuid = UUID.randomUUID();
-		Tokens.put(tokenUuid, t);
+		Tokens.put(tokenUuid.toString(), t);
 		
 		return tokenUuid.toString();
 	}

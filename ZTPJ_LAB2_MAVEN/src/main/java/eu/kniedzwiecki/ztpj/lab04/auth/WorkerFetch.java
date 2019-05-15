@@ -26,6 +26,7 @@ public class WorkerFetch extends UnicastRemoteObject implements IWorkerFetch
 	{
 		Token t = a.getTokenData(token);
 		if(t == null) return null;
+		System.out.println("<VERIFIED GETALLWORKERS EXECUTION>");
 		if(!t.IsValid()) return null;
 		t.Use();
 		try

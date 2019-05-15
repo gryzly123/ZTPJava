@@ -28,7 +28,7 @@ public class Main {
 	static RmiServer rmiServer;
 	static RmiClient rmiClient;
 	
-	public static void main(String[] args) throws Exception
+	public static void main(String[] args)
 	{
 		s = new Scanner(System.in);
 		
@@ -39,7 +39,8 @@ public class Main {
 			//sd = new ServerDaemon();
 			//thr = new Thread(sd);
 			//thr.start();
-			rmiServer = new RmiServer();
+			try { rmiServer = new RmiServer(); }
+			catch(Exception e) { System.out.println(e.toString()); System.exit(0); }
 //			try { rmiServer = new RmiServer(); }
 //			catch(Exception e) { System.out.println(e.toString()); }
 		}
@@ -74,6 +75,7 @@ public class Main {
 					break;
 				case 6:
 					TryGetDataFromRemoteRmi();
+					break;
 				case 7:
 					return;
 				default:
@@ -164,6 +166,7 @@ public class Main {
 		catch (Exception e)
 		{
 			System.out.println(e.toString());
+			System.exit(0);
 		}
 	}
 
@@ -173,11 +176,17 @@ public class Main {
 		{
 			if(rmiClient == null) rmiClient = new RmiClient();
 			
+			s.nextLine();
+			
 			System.out.print("Uzytkownik: ");
 			String username = s.nextLine();
+			String password;
 
 			System.out.print("Haslo: ");
-			String password = new String(System.console().readPassword());
+			if(System.console() != null)
+				password = new String(System.console().readPassword());
+			else
+				password = s.nextLine();
 			
 			if(!rmiClient.Login(username, password))
 			{
@@ -186,12 +195,16 @@ public class Main {
 			}
 			
 			List<Worker> workers = rmiClient.FetchWorkers();
-			PrintWorkers(workers);
+			if(workers != null)
+				PrintWorkers(workers);
+			else
+				System.out.println("Fetch failed, null received from server.");
 			
 		} catch (RemoteException ex) {
 			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-		} catch (NotBoundException | IOException ex) {
-			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (NotBoundException | IOException e) {
+			System.out.println(e.toString());
+			System.exit(0);
 		}
 	}
 	

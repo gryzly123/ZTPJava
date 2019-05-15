@@ -2,6 +2,8 @@ package eu.kniedzwiecki.ztpj.lab04.rmi;
 
 import eu.kniedzwiecki.ztpj.lab02.entities.Worker;
 import eu.kniedzwiecki.ztpj.lab04.auth.Authenticator;
+import eu.kniedzwiecki.ztpj.lab04.auth.IAuthenticator;
+import eu.kniedzwiecki.ztpj.lab04.auth.IWorkerFetch;
 import eu.kniedzwiecki.ztpj.lab04.auth.WorkerFetch;
 import java.rmi.*;
 import java.rmi.registry.*;
@@ -12,17 +14,18 @@ import java.util.List;
 
 public class RmiClient 
 {
-	Authenticator remoteAuth;
-	WorkerFetch remoteWf;
+	IAuthenticator remoteAuth;
+	IWorkerFetch remoteWf;
 	String sessionToken;
 	
 	public RmiClient() throws RemoteException, NotBoundException
 	{
-		System.setProperty("java.security.policy","file:/rmi.policy");
-		Registry r = LocateRegistry.getRegistry("127.0.0.1", 1112);
+		//System.setProperty("java.security.policy","file:/rmi.policy");
 		
-		remoteAuth = (Authenticator) r.lookup("rmi://127.0.0.1:1112/auth");
-		remoteWf   = (WorkerFetch)   r.lookup("rmi://127.0.0.1:1112/wf");
+		Registry r = LocateRegistry.getRegistry(RmiServer.rmiHost, RmiServer.rmiPort);
+		
+		remoteAuth = (IAuthenticator) r.lookup("auth");
+		remoteWf   = (IWorkerFetch)   r.lookup("wf");
 	}
 	
 	public boolean Login(String username, String password) throws RemoteException
