@@ -68,7 +68,7 @@ public class ServerDaemon implements Runnable
 		}
 	}
 	
-	public String ServeXmlDb()
+	public static String ServeXmlDb()
 	{
 		List<Worker> Workers = null;
 		

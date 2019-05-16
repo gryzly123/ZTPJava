@@ -7,26 +7,28 @@ package eu.kniedzwiecki.ztpj.lab02;
 
 import eu.kniedzwiecki.ztpj.lab02.db.DataSource;
 import eu.kniedzwiecki.ztpj.lab02.db.WorkerDao;
-import eu.kniedzwiecki.ztpj.lab02.entities.EPosition;
-import eu.kniedzwiecki.ztpj.lab02.entities.Worker;
+import eu.kniedzwiecki.ztpj.lab02.entities.*;
+import eu.kniedzwiecki.ztpj.lab04.rmi.*;
 import java.io.IOException;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.net.MalformedURLException;
+import java.rmi.AlreadyBoundException;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-/**
- *
- * @author knied
- */
+
 public class Main {
 
 	static Scanner s;
 	static ServerDaemon sd;
 	static Thread thr;
+	static RmiServer rmiServer;
+	static RmiClient rmiClient;
 	
-	public static void main(String[] args) throws IOException
+	public static void main(String[] args)
 	{
 		s = new Scanner(System.in);
 		
@@ -34,11 +36,17 @@ public class Main {
 		int selection = s.nextInt();
 		if(selection == 1)
 		{
-			sd = new ServerDaemon();
-			//sd.StartDaemon();
-			//sd.ListenAsync();
-			thr = new Thread(sd);
-			thr.start();
+			try 
+			{
+				sd = new ServerDaemon();
+				thr = new Thread(sd);
+				thr.start();
+				rmiServer = new RmiServer(); 
+			}
+			catch(Exception e) 
+			{
+				System.out.println(e.toString()); System.exit(0); 
+			}
 		}
 		
 		do 
@@ -48,8 +56,9 @@ public class Main {
 			System.out.println("  2: dodaj pracownika");
 			System.out.println("  3: usun pracownika");
 			System.out.println("  4: kopia zapasowa");
-			System.out.println("  5: pobierz ze zdalnego serwera");
-			System.out.println("  6: zamknij aplikacje");
+			System.out.println("  5: pobierz ze zdalnego serwera (TCP)");
+			System.out.println("  6: pobierz ze zdalnego serwera (RMI)");
+			System.out.println("  7: zamknij aplikacje");
 			System.out.print("Wybór > ");
 			selection = s.nextInt();
 			switch(selection)
@@ -66,9 +75,12 @@ public class Main {
 				case 4:
 					Backup();
 				case 5:
-					TryGetDataFromRemote();
+					TryGetDataFromRemoteTcp();
 					break;
 				case 6:
+					TryGetDataFromRemoteRmi();
+					break;
+				case 7:
 					return;
 				default:
 					System.out.println("invalid option");
@@ -148,7 +160,7 @@ public class Main {
 		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
 	}
 
-	private static void TryGetDataFromRemote()
+	private static void TryGetDataFromRemoteTcp()
 	{
 		String IP = "";
 		while(IP.length() < 1) IP = s.nextLine();
@@ -158,7 +170,45 @@ public class Main {
 		catch (Exception e)
 		{
 			System.out.println(e.toString());
+			System.exit(0);
 		}
 	}
-	
+
+	private static void TryGetDataFromRemoteRmi()
+	{
+		try 
+		{
+			if(rmiClient == null) rmiClient = new RmiClient();
+			
+			s.nextLine();
+			
+			System.out.print("Uzytkownik: ");
+			String username = s.nextLine();
+			String password;
+
+			System.out.print("Haslo: ");
+			if(System.console() != null)
+				password = new String(System.console().readPassword());
+			else
+				password = s.nextLine();
+			
+			if(!rmiClient.Login(username, password))
+			{
+				System.out.println("Login error: user doesn't exist");
+				return;
+			}
+			
+			List<Worker> workers = rmiClient.FetchWorkers();
+			if(workers != null)
+				PrintWorkers(workers);
+			else
+				System.out.println("Fetch failed, null received from server.");
+			
+		} catch (RemoteException ex) {
+			Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+		} catch (NotBoundException | IOException e) {
+			System.out.println(e.toString());
+			System.exit(0);
+		}
+	}
 }
