@@ -1,53 +1,56 @@
 package eu.kniedzwiecki.ztpj.lab02.entities;
 import java.io.Serializable;
 import java.util.Scanner;
+import javax.xml.bind.annotation.*;
 
+@XmlRootElement(name = "worker")
+@XmlType(propOrder = { "id", "firstName", "lastName", "phoneNumber", "serviceCardNumber", "pay"})
 public class Worker implements Serializable
 {
 	//these should be private but this is a school assignment and time is of essence
-	public String pesel, firstName, lastName, phoneNumber, serviceCardNumber;
-	public int id = -1, pay;
-	public final EPosition position;
+	private   String pesel, firstName, lastName, phoneNumber, serviceCardNumber;
+	private   int id = -1, pay;
+	private final EPosition position;
 	
 	public String toString()
 	{
 		return "Id:\t\t"
-				+ Integer.toString(id)
+				+ Integer.toString(getId())
 				+ "\nImie:\t\t"
-				+ firstName
+				+ getFirstName()
 				+ "\nNazwisko:\t"
-				+ lastName
+				+ getLastName()
 				+ "\nTelefon:\t"
-				+ phoneNumber
+				+ getPhoneNumber()
 				+ "\nPesel:\t\t"
-				+ pesel
+				+ getPesel()
 				+ "\nNumer karty:\t"
-				+ serviceCardNumber
+				+ getServiceCardNumber()
 				+ "\nPlaca:\t\t"
-				+ Integer.toString(pay)
+				+ Integer.toString(getPay())
 				+ "zl\nPozycja:\t"
-				+ EPosition.toString(position);				
+				+ EPosition.toString(getPosition());				
 	}
 	
 	public void readFromStream(Scanner s)
 	{
 		System.out.print("Imie:\t\t");
-		firstName = s.nextLine();
+		setFirstName(s.nextLine());
 		
 		System.out.print("Nazwisko:\t");
-		lastName = s.nextLine();
+		setLastName(s.nextLine());
 		
 		System.out.print("Telefon:\t");
-		phoneNumber = s.nextLine();
+		setPhoneNumber(s.nextLine());
 		
 		System.out.print("Pesel:\t\t");
-		pesel = s.nextLine();
+		setPesel(s.nextLine());
 		
 		System.out.print("Numer karty:\t");
-		serviceCardNumber = s.nextLine();
+		setServiceCardNumber(s.nextLine());
 		
 		System.out.print("Placa:\t\t");
-		pay = s.nextInt();
+		setPay(s.nextInt());
 	}
 	
 	protected Worker(EPosition _position)
@@ -60,5 +63,70 @@ public class Worker implements Serializable
 		position = EPosition.BaseWorker;
 	}
 
-	
+	public String getPesel() {
+		return pesel;
+	}
+
+	public String getFirstName() {
+		return firstName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public String getPhoneNumber() {
+		return phoneNumber;
+	}
+
+	public String getServiceCardNumber() {
+		return serviceCardNumber;
+	}
+
+	public int getId() {
+		return id;
+	}
+
+	public int getPay() {
+		return pay;
+	}
+
+	public EPosition getPosition() {
+		return position;
+	}
+
+	@XmlAttribute
+	public void setPesel(String pesel) {
+		this.pesel = pesel;
+	}
+
+	@XmlAttribute
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	@XmlAttribute
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	@XmlAttribute
+	public void setPhoneNumber(String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	@XmlAttribute
+	public void setServiceCardNumber(String serviceCardNumber) {
+		this.serviceCardNumber = serviceCardNumber;
+	}
+
+	@XmlAttribute
+	public void setId(int id) {
+		this.id = id;
+	}
+
+	@XmlAttribute
+	public void setPay(int pay) {
+		this.pay = pay;
+	}
 }

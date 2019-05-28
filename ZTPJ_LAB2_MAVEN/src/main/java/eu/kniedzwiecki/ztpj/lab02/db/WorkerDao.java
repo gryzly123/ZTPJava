@@ -86,18 +86,18 @@ public class WorkerDao
 				EPosition position = EPosition.getPositionFromId(positionId);
 				worker = EPosition.createWorkerFromPosition(position);
 				
-				worker.id = result.getInt("id");
-				worker.firstName = result.getString("first_name");
-				worker.lastName = result.getString("last_name");
-				worker.pesel = result.getString("pesel");
-				worker.pay = Integer.parseInt(result.getString("salary"));
-				worker.phoneNumber = result.getString("phone_number");
-				worker.serviceCardNumber = result.getString("service_card_number");
+				worker.setId(result.getInt("id"));
+				worker.setFirstName(result.getString("first_name"));
+				worker.setLastName(result.getString("last_name"));
+				worker.setPesel(result.getString("pesel"));
+				worker.setPay(Integer.parseInt(result.getString("salary")));
+				worker.setPhoneNumber(result.getString("phone_number"));
+				worker.setServiceCardNumber(result.getString("service_card_number"));
 			}
 			result.close();
 			//psGetWorker.close();
 			
-			switch(worker.position)
+			switch(worker.getPosition())
 			{
 				case Director:
 					if(psGetDirector == null) psGetDirector = c.prepareStatement(getDirector);
@@ -172,24 +172,24 @@ public class WorkerDao
 			c.setAutoCommit(false);
 			if(psSaveWorker == null) psSaveWorker = c.prepareStatement(insertWorker, PreparedStatement.RETURN_GENERATED_KEYS);
 			
-			psSaveWorker.setString(1, t.firstName);
-			psSaveWorker.setString(2, t.lastName);
-			psSaveWorker.setString(3, t.pesel);
-			psSaveWorker.setInt   (4, EPosition.getIdFromPosition(t.position));
-			psSaveWorker.setInt   (7, t.pay);
-			psSaveWorker.setString(5, t.phoneNumber);
-			psSaveWorker.setString(6, t.serviceCardNumber);
+			psSaveWorker.setString(1, t.getFirstName());
+			psSaveWorker.setString(2, t.getLastName());
+			psSaveWorker.setString(3, t.getPesel());
+			psSaveWorker.setInt   (4, EPosition.getIdFromPosition(t.getPosition()));
+			psSaveWorker.setInt   (7, t.getPay());
+			psSaveWorker.setString(5, t.getPhoneNumber());
+			psSaveWorker.setString(6, t.getServiceCardNumber());
 			int result = psSaveWorker.executeUpdate();
 			ResultSet rs = psSaveWorker.getGeneratedKeys();
 			if(!rs.next()) throw new Exception("internalSave() sql failed");
-			t.id = rs.getInt(1);
+			t.setId(rs.getInt(1));
 			rs.close();
 			
-			switch(t.position)
+			switch(t.getPosition())
 			{
 				case Director:
 					if(psInsertDirector == null) psInsertDirector = c.prepareStatement(insertDirector);
-					psInsertDirector.setInt(1, t.id);
+					psInsertDirector.setInt(1, t.getId());
 					psInsertDirector.setInt(2, ((Director)t).businessAllowance);
 					psInsertDirector.setInt(3, ((Director)t).monthlyCostLimit);
 					int result2 = psInsertDirector.executeUpdate();
@@ -198,7 +198,7 @@ public class WorkerDao
 					
 				case Salesman:
 					if(psInsertSalesman == null) psInsertSalesman = c.prepareStatement(insertSalesman);
-					psInsertSalesman.setInt(1, t.id);
+					psInsertSalesman.setInt(1, t.getId());
 					psInsertSalesman.setInt(2, ((Salesman)t).commisionLimit);
 					psInsertSalesman.setInt(3, ((Salesman)t).commisionPercentage);
 					int result3 = psInsertSalesman.executeUpdate();
@@ -226,14 +226,14 @@ public class WorkerDao
 			c.setAutoCommit(false);
 			if(psUpdateWorker == null) psUpdateWorker = c.prepareStatement(updateWorker);
 			
-			psUpdateWorker.setString(1, t.firstName);
-			psUpdateWorker.setString(2, t.lastName);
-			psUpdateWorker.setString(3, t.pesel);
-			psUpdateWorker.setInt   (4, EPosition.getIdFromPosition(t.position));
-			psUpdateWorker.setInt   (5, t.pay);
-			psUpdateWorker.setString(6, t.phoneNumber);
-			psUpdateWorker.setString(7, t.serviceCardNumber);
-			psUpdateWorker.setInt   (8, t.id);
+			psUpdateWorker.setString(1, t.getFirstName());
+			psUpdateWorker.setString(2, t.getLastName());
+			psUpdateWorker.setString(3, t.getPesel());
+			psUpdateWorker.setInt   (4, EPosition.getIdFromPosition(t.getPosition()));
+			psUpdateWorker.setInt   (5, t.getPay());
+			psUpdateWorker.setString(6, t.getPhoneNumber());
+			psUpdateWorker.setString(7, t.getServiceCardNumber());
+			psUpdateWorker.setInt   (8, t.getId());
 			if(psUpdateWorker.executeUpdate() == 0) throw new Exception("internalUpdate() sql failed");
 			c.commit();
 		}
@@ -252,21 +252,21 @@ public class WorkerDao
 			c.setAutoCommit(false);
 			if(psDeleteWorker == null) psDeleteWorker = c.prepareStatement(deleteWorker);
 	
-			psDeleteWorker.setInt(1, t.id);
+			psDeleteWorker.setInt(1, t.getId());
 			int result = psDeleteWorker.executeUpdate();
 			
-			switch(t.position)
+			switch(t.getPosition())
 			{
 				case Director:
 					if(psDeleteDirector == null) psDeleteDirector = c.prepareStatement(deleteDirector);
-					psDeleteDirector.setInt(1, t.id);
+					psDeleteDirector.setInt(1, t.getId());
 					int result2 = psDeleteDirector.executeUpdate();
 					if(result2 == 0) throw new Exception("delete director sql failed");
 					break;
 					
 				case Salesman:
 					if(psDeleteSalesman == null) psDeleteSalesman = c.prepareStatement(deleteSalesman);
-					psDeleteSalesman.setInt(1, t.id);
+					psDeleteSalesman.setInt(1, t.getId());
 					int result3 = psDeleteSalesman.executeUpdate();
 					if(result3 == 0) throw new Exception("delete salesman sql failed");
 					break;
@@ -284,21 +284,21 @@ public class WorkerDao
 	
 	public static void save(Worker t) throws SQLException
 	{
-		if(t.id > -1) throw new SQLException("Can't save, user already exists!");
+		if(t.getId() > -1) throw new SQLException("Can't save, user already exists!");
 		Connection c = DataSource.Get().bds.getConnection();
 		internalSave(t);
 	}
 	
 	public static void update(Worker t, String[] params) throws SQLException
 	{
-		if(t.id < 0) throw new SQLException("Can't update, user doesn't exist in db yet!");
+		if(t.getId() < 0) throw new SQLException("Can't update, user doesn't exist in db yet!");
 		Connection c = DataSource.Get().bds.getConnection();
 		internalUpdate(t);
 	}
 	
 	public static void delete(Worker t) throws SQLException, Exception
 	{
-		if(t.id < 0) throw new SQLException("Can't delete, user doesn't exist in db yet!");
+		if(t.getId() < 0) throw new SQLException("Can't delete, user doesn't exist in db yet!");
 		Connection c = DataSource.Get().bds.getConnection();
 		internalDelete(t);
 	}
