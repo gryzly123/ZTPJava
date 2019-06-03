@@ -12,7 +12,9 @@ public class WorkersEndpoint
 	{
 		try
 		{
-			endpoint = Endpoint.publish(serviceUrl, new WorkersWebServiceImpl());
+			endpoint = Endpoint.create(new WorkersWebServiceImpl());
+			endpoint.setExecutor(new WorkersServiceThreadPool());
+			endpoint.publish(serviceUrl);
 			System.out.println("JAX-WebService started: " + serviceUrl);
 		}
 		catch(Exception e)
