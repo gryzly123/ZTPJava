@@ -5,11 +5,15 @@
  */
 package eu.kniedzwiecki.ztpj.lab02;
 
+import eu.kniedzwiecki.ztpj.lab03.tcp.ServerDaemon;
+import eu.kniedzwiecki.ztpj.lab03.tcp.ClientRequest;
 import eu.kniedzwiecki.ztpj.lab02.db.DataSource;
 import eu.kniedzwiecki.ztpj.lab02.db.WorkerDao;
 import eu.kniedzwiecki.ztpj.lab02.entities.*;
 import eu.kniedzwiecki.ztpj.lab04.rmi.*;
-import java.io.IOException;
+import eu.kniedzwiecki.ztpj.lab06.jaxb.Marshal;
+import eu.kniedzwiecki.ztpj.lab06.jaxb.WorkerDb;
+import java.io.*;
 import java.net.MalformedURLException;
 import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
@@ -27,11 +31,10 @@ public class Main {
 	static Thread thr;
 	static RmiServer rmiServer;
 	static RmiClient rmiClient;
-	
+			
 	public static void main(String[] args)
 	{
 		s = new Scanner(System.in);
-		
 		System.out.println("\n\nWlaczyc serwer [1 jesli tak]? > ");
 		int selection = s.nextInt();
 		if(selection == 1)
@@ -41,7 +44,7 @@ public class Main {
 				sd = new ServerDaemon();
 				thr = new Thread(sd);
 				thr.start();
-				rmiServer = new RmiServer(); 
+				rmiServer = new RmiServer();
 			}
 			catch(Exception e) 
 			{
@@ -58,7 +61,9 @@ public class Main {
 			System.out.println("  4: kopia zapasowa");
 			System.out.println("  5: pobierz ze zdalnego serwera (TCP)");
 			System.out.println("  6: pobierz ze zdalnego serwera (RMI)");
-			System.out.println("  7: zamknij aplikacje");
+			System.out.println("  7: zapisz pracownikow do XML (JAXB)");
+			System.out.println("  8: wczytaj pracownikow z XML (JAXB)");
+			System.out.println("  9: zamknij aplikacje");
 			System.out.print("Wybór > ");
 			selection = s.nextInt();
 			switch(selection)
@@ -74,6 +79,7 @@ public class Main {
 					break;
 				case 4:
 					Backup();
+					break;
 				case 5:
 					TryGetDataFromRemoteTcp();
 					break;
@@ -81,6 +87,12 @@ public class Main {
 					TryGetDataFromRemoteRmi();
 					break;
 				case 7:
+					SaveWorkersToXml();
+					break;
+				case 8:
+					ReadWorkersFromXml();
+					break;
+				case 9:
 					return;
 				default:
 					System.out.println("invalid option");
@@ -211,4 +223,33 @@ public class Main {
 			System.exit(0);
 		}
 	}
+
+	private static void SaveWorkersToXml()
+	{
+		try
+		{
+			WorkerDb workers = new WorkerDb();
+			workers.setWorkers(WorkerDao.getAll());
+			FileWriter fw = Marshal.CreateWriter("workers.xml");
+			Marshal.MarshallWorkers(workers, fw);
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.toString());
+		}
+	}
+
+	private static void ReadWorkersFromXml() {
+		try
+		{
+			FileReader fr = Marshal.CreateReader("workers.xml");
+			WorkerDb w = Marshal.UnmarshallWorkers(fr);
+			PrintWorkers(w.getWorkers());
+		}
+		catch(Exception e)
+		{
+			System.out.println(e.toString());
+		}
+	}
+
 }
