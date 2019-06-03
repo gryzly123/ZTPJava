@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.kniedzwiecki.ztpj.lab02;
 
 import eu.kniedzwiecki.ztpj.lab03.tcp.ServerDaemon;
@@ -13,6 +8,7 @@ import eu.kniedzwiecki.ztpj.lab02.entities.*;
 import eu.kniedzwiecki.ztpj.lab04.rmi.*;
 import eu.kniedzwiecki.ztpj.lab06.jaxb.Marshal;
 import eu.kniedzwiecki.ztpj.lab06.jaxb.WorkerDb;
+import eu.kniedzwiecki.ztpj.lab07.jaxws.WorkersEndpoint;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.rmi.AlreadyBoundException;
@@ -31,11 +27,12 @@ public class Main {
 	static Thread thr;
 	static RmiServer rmiServer;
 	static RmiClient rmiClient;
-			
+	static WorkersEndpoint jaxwsEndpoint;		
+	
 	public static void main(String[] args)
 	{
 		s = new Scanner(System.in);
-		System.out.println("\n\nWlaczyc serwer [1 jesli tak]? > ");
+		System.out.print("\n\nWlaczyc serwery [1 jesli tak]? > ");
 		int selection = s.nextInt();
 		if(selection == 1)
 		{
@@ -45,6 +42,7 @@ public class Main {
 				thr = new Thread(sd);
 				thr.start();
 				rmiServer = new RmiServer();
+				jaxwsEndpoint = new WorkersEndpoint();
 			}
 			catch(Exception e) 
 			{
