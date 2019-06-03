@@ -9,6 +9,7 @@ import eu.kniedzwiecki.ztpj.lab04.rmi.*;
 import eu.kniedzwiecki.ztpj.lab06.jaxb.Marshal;
 import eu.kniedzwiecki.ztpj.lab06.jaxb.WorkerDb;
 import eu.kniedzwiecki.ztpj.lab07.jaxws.WorkersEndpoint;
+import eu.kniedzwiecki.ztpj.lab07.jaxws.WorkersWebServiceClient;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.rmi.AlreadyBoundException;
@@ -61,7 +62,8 @@ public class Main {
 			System.out.println("  6: pobierz ze zdalnego serwera (RMI)");
 			System.out.println("  7: zapisz pracownikow do XML (JAXB)");
 			System.out.println("  8: wczytaj pracownikow z XML (JAXB)");
-			System.out.println("  9: zamknij aplikacje");
+			System.out.println("  9: pobierz ze zdalnego serwera (JAXWS)");
+			System.out.println(" 10: zamknij aplikacje");
 			System.out.print("Wybór > ");
 			selection = s.nextInt();
 			switch(selection)
@@ -91,6 +93,9 @@ public class Main {
 					ReadWorkersFromXml();
 					break;
 				case 9:
+					TryGetDataFromRemoteJaxws();
+					break;
+				case 10:
 					return;
 				default:
 					System.out.println("invalid option");
@@ -248,6 +253,50 @@ public class Main {
 		{
 			System.out.println(e.toString());
 		}
+	}
+
+	private static void TryGetDataFromRemoteJaxws()
+	{
+		try 
+		{
+			WorkersWebServiceClient client = new WorkersWebServiceClient();
+			
+			s.nextLine();
+			
+			System.out.print("Uzytkownik: ");
+			String username = s.nextLine();
+			String password;
+
+			System.out.print("Haslo: ");
+			if(System.console() != null)
+				password = new String(System.console().readPassword());
+			else
+				password = s.nextLine();
+			
+			String token = client.AuthUser(username, password);
+			
+			if(token == null)
+			{
+				System.out.println("Login error: user doesn't exist");
+				return;
+			}
+			
+			String xmlWorkers = client.GetWorkersXml(token);
+			
+			WorkerDb t = null;
+			if(xmlWorkers != null)
+			{
+				t = Marshal.UnmarshallWorkers(Marshal.CreateReaderStr(xmlWorkers));
+			}
+			if(t != null)
+				PrintWorkers(t.getWorkers());
+			else
+				System.out.println("Fetch failed, null received from server.");
+			
+		} catch (Exception e) 
+		{
+			System.out.println("TryGetDataFromRemoteJaxws() error: " + e.toString());
+		}	
 	}
 
 }
