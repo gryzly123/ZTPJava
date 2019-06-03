@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package eu.kniedzwiecki.ztpj.lab02;
+package eu.kniedzwiecki.ztpj.lab03.tcp;
 
 import eu.kniedzwiecki.ztpj.lab02.db.WorkerDao;
 import eu.kniedzwiecki.ztpj.lab02.entities.Worker;

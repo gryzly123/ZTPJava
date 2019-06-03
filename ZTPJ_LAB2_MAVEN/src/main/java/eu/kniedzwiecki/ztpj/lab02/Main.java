@@ -5,6 +5,8 @@
  */
 package eu.kniedzwiecki.ztpj.lab02;
 
+import eu.kniedzwiecki.ztpj.lab03.tcp.ServerDaemon;
+import eu.kniedzwiecki.ztpj.lab03.tcp.ClientRequest;
 import eu.kniedzwiecki.ztpj.lab02.db.DataSource;
 import eu.kniedzwiecki.ztpj.lab02.db.WorkerDao;
 import eu.kniedzwiecki.ztpj.lab02.entities.*;
@@ -42,7 +44,7 @@ public class Main {
 				sd = new ServerDaemon();
 				thr = new Thread(sd);
 				thr.start();
-				rmiServer = new RmiServer(); 
+				rmiServer = new RmiServer();
 			}
 			catch(Exception e) 
 			{
