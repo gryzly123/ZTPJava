@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<workers>
+    <data id="6" firstName="Jan" lastName="Kowalski" phoneNumber="1233454562" serviceCardNumber="12347812343" pay="10000" pesel="123456789"/>
+    <data id="7" firstName="Halina" lastName="Malinowska" phoneNumber="0934598345" pay="5000" pesel="123987234"/>
+    <data id="8" firstName="Bozena" lastName="Dzban" pay="3500" pesel="09845323"/>
+    <data id="9" firstName="Miroslaw" lastName="Hebel" phoneNumber="098234092" pay="3800" pesel="0983452"/>
+    <data id="10" firstName="Marcin" lastName="Gondola" serviceCardNumber="8723423-234" pay="4800" pesel="998345323"/>
+    <data id="11" firstName="Janina" lastName="Dzensen" phoneNumber="908475234" serviceCardNumber="129387-345345" pay="2800" pesel="89017234"/>
+</workers>
