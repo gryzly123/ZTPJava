@@ -14,9 +14,6 @@ public class DataSource {
 		return inst;
 	}
 	
-	//public Connection GetC() throws SQLException { /*c.close(); c = bds.getConnection();*/ return c; }
-	
-	
 	public BasicDataSource bds = null;
 	
 	public Connection getC()

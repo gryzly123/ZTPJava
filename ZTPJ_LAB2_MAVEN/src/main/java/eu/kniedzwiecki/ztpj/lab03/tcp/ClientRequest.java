@@ -1,9 +1,7 @@
 package eu.kniedzwiecki.ztpj.lab03.tcp;
 
-import eu.kniedzwiecki.ztpj.lab02.db.WorkerDao;
 import eu.kniedzwiecki.ztpj.lab02.entities.Worker;
 import java.beans.XMLDecoder;
-import java.beans.XMLEncoder;
 import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;

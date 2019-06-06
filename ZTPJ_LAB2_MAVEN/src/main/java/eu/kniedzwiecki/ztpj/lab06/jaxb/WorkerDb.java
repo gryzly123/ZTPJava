@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "workers")
 public class WorkerDb {
 	
-	private List<Worker> workers = new ArrayList<Worker>();
+	private List<Worker> workers = new ArrayList<>();
 
 	public List<Worker> getWorkers() {
 		return workers;

@@ -11,8 +11,6 @@ import eu.kniedzwiecki.ztpj.lab06.jaxb.WorkerDb;
 import eu.kniedzwiecki.ztpj.lab07.jaxws.WorkersEndpoint;
 import eu.kniedzwiecki.ztpj.lab07.jaxws.WorkersWebServiceClient;
 import java.io.*;
-import java.net.MalformedURLException;
-import java.rmi.AlreadyBoundException;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.List;

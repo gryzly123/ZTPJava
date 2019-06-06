@@ -7,10 +7,6 @@ import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
 
-/**
- *
- * @author knied
- */
 public class WorkerFetch extends UnicastRemoteObject implements IWorkerFetch
 {
 	private final Authenticator a;

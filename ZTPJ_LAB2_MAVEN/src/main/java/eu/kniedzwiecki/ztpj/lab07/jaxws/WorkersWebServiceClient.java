@@ -1,12 +1,7 @@
 package eu.kniedzwiecki.ztpj.lab07.jaxws;
 
-import eu.kniedzwiecki.ztpj.lab06.jaxb.Marshal;
-import eu.kniedzwiecki.ztpj.lab06.jaxb.WorkerDb;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.xml.bind.JAXBException;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 

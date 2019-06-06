@@ -1,0 +1,394 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 11.2
+-- Dumped by pg_dump version 11.2
+
+-- Started on 2019-06-06 18:49:50
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+--
+-- TOC entry 4 (class 2615 OID 2200)
+-- Name: public; Type: SCHEMA; Schema: -; Owner: postgres
+--
+
+CREATE SCHEMA public;
+
+
+ALTER SCHEMA public OWNER TO postgres;
+
+--
+-- TOC entry 2858 (class 0 OID 0)
+-- Dependencies: 4
+-- Name: SCHEMA public; Type: COMMENT; Schema: -; Owner: postgres
+--
+
+COMMENT ON SCHEMA public IS 'standard public schema';
+
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- TOC entry 197 (class 1259 OID 16393)
+-- Name: directors_allowances; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.directors_allowances (
+    id integer NOT NULL,
+    worker_id integer NOT NULL,
+    business_allowance integer NOT NULL,
+    monthly_cost_limit integer NOT NULL
+);
+
+
+ALTER TABLE public.directors_allowances OWNER TO postgres;
+
+--
+-- TOC entry 198 (class 1259 OID 16396)
+-- Name: directors_allowances_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.directors_allowances_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.directors_allowances_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2859 (class 0 OID 0)
+-- Dependencies: 198
+-- Name: directors_allowances_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.directors_allowances_id_seq OWNED BY public.directors_allowances.id;
+
+
+--
+-- TOC entry 199 (class 1259 OID 16398)
+-- Name: positions; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.positions (
+    id integer NOT NULL,
+    name character varying NOT NULL
+);
+
+
+ALTER TABLE public.positions OWNER TO postgres;
+
+--
+-- TOC entry 200 (class 1259 OID 16404)
+-- Name: positions_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.positions_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.positions_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2860 (class 0 OID 0)
+-- Dependencies: 200
+-- Name: positions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.positions_id_seq OWNED BY public.positions.id;
+
+
+--
+-- TOC entry 201 (class 1259 OID 16406)
+-- Name: tradesmans_commissions; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.tradesmans_commissions (
+    id integer NOT NULL,
+    worker_id integer NOT NULL,
+    commission integer NOT NULL,
+    monthly_commission_limit integer NOT NULL
+);
+
+
+ALTER TABLE public.tradesmans_commissions OWNER TO postgres;
+
+--
+-- TOC entry 202 (class 1259 OID 16409)
+-- Name: tradesmans_commissions_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.tradesmans_commissions_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.tradesmans_commissions_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2861 (class 0 OID 0)
+-- Dependencies: 202
+-- Name: tradesmans_commissions_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.tradesmans_commissions_id_seq OWNED BY public.tradesmans_commissions.id;
+
+
+--
+-- TOC entry 203 (class 1259 OID 16411)
+-- Name: workers; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.workers (
+    id integer NOT NULL,
+    first_name character varying NOT NULL,
+    last_name character varying NOT NULL,
+    pesel character varying NOT NULL,
+    position_id integer NOT NULL,
+    phone_number character varying,
+    service_card_number character varying,
+    salary integer NOT NULL
+);
+
+
+ALTER TABLE public.workers OWNER TO postgres;
+
+--
+-- TOC entry 204 (class 1259 OID 16417)
+-- Name: workers_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
+--
+
+CREATE SEQUENCE public.workers_id_seq
+    AS integer
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+ALTER TABLE public.workers_id_seq OWNER TO postgres;
+
+--
+-- TOC entry 2862 (class 0 OID 0)
+-- Dependencies: 204
+-- Name: workers_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: postgres
+--
+
+ALTER SEQUENCE public.workers_id_seq OWNED BY public.workers.id;
+
+
+--
+-- TOC entry 2706 (class 2604 OID 16419)
+-- Name: directors_allowances id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.directors_allowances ALTER COLUMN id SET DEFAULT nextval('public.directors_allowances_id_seq'::regclass);
+
+
+--
+-- TOC entry 2707 (class 2604 OID 16420)
+-- Name: positions id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.positions ALTER COLUMN id SET DEFAULT nextval('public.positions_id_seq'::regclass);
+
+
+--
+-- TOC entry 2708 (class 2604 OID 16421)
+-- Name: tradesmans_commissions id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tradesmans_commissions ALTER COLUMN id SET DEFAULT nextval('public.tradesmans_commissions_id_seq'::regclass);
+
+
+--
+-- TOC entry 2709 (class 2604 OID 16422)
+-- Name: workers id; Type: DEFAULT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.workers ALTER COLUMN id SET DEFAULT nextval('public.workers_id_seq'::regclass);
+
+
+--
+-- TOC entry 2845 (class 0 OID 16393)
+-- Dependencies: 197
+-- Data for Name: directors_allowances; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.directors_allowances (id, worker_id, business_allowance, monthly_cost_limit) FROM stdin;
+8	6	5000	20000
+\.
+
+
+--
+-- TOC entry 2847 (class 0 OID 16398)
+-- Dependencies: 199
+-- Data for Name: positions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.positions (id, name) FROM stdin;
+1	Pracownik
+3	Handlowiec
+4	Dyrektor
+\.
+
+
+--
+-- TOC entry 2849 (class 0 OID 16406)
+-- Dependencies: 201
+-- Data for Name: tradesmans_commissions; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.tradesmans_commissions (id, worker_id, commission, monthly_commission_limit) FROM stdin;
+3	7	15	50
+4	10	20	100
+5	11	5	10
+\.
+
+
+--
+-- TOC entry 2851 (class 0 OID 16411)
+-- Dependencies: 203
+-- Data for Name: workers; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.workers (id, first_name, last_name, pesel, position_id, phone_number, service_card_number, salary) FROM stdin;
+6	Jan	Kowalski	123456789	4	1233454562	12347812343	10000
+7	Halina	Malinowska	123987234	3	0934598345	\N	5000
+8	Bozena	Dzban	09845323	1	\N	\N	3500
+9	Miroslaw	Hebel	0983452	1	098234092	\N	3800
+10	Marcin	Gondola	998345323	3	\N	8723423-234	4800
+11	Janina	Dzensen	89017234	3	908475234	129387-345345	2800
+\.
+
+
+--
+-- TOC entry 2863 (class 0 OID 0)
+-- Dependencies: 198
+-- Name: directors_allowances_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.directors_allowances_id_seq', 9, true);
+
+
+--
+-- TOC entry 2864 (class 0 OID 0)
+-- Dependencies: 200
+-- Name: positions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.positions_id_seq', 4, true);
+
+
+--
+-- TOC entry 2865 (class 0 OID 0)
+-- Dependencies: 202
+-- Name: tradesmans_commissions_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.tradesmans_commissions_id_seq', 6, true);
+
+
+--
+-- TOC entry 2866 (class 0 OID 0)
+-- Dependencies: 204
+-- Name: workers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
+--
+
+SELECT pg_catalog.setval('public.workers_id_seq', 16, true);
+
+
+--
+-- TOC entry 2711 (class 2606 OID 16424)
+-- Name: directors_allowances directors_allowances_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.directors_allowances
+    ADD CONSTRAINT directors_allowances_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2713 (class 2606 OID 16426)
+-- Name: directors_allowances directors_allowances_worker_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.directors_allowances
+    ADD CONSTRAINT directors_allowances_worker_id_key UNIQUE (worker_id);
+
+
+--
+-- TOC entry 2715 (class 2606 OID 16428)
+-- Name: positions positions_name_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.positions
+    ADD CONSTRAINT positions_name_key UNIQUE (name);
+
+
+--
+-- TOC entry 2717 (class 2606 OID 16430)
+-- Name: positions positions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.positions
+    ADD CONSTRAINT positions_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2719 (class 2606 OID 16432)
+-- Name: tradesmans_commissions tradesmans_commissions_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tradesmans_commissions
+    ADD CONSTRAINT tradesmans_commissions_pkey PRIMARY KEY (id);
+
+
+--
+-- TOC entry 2721 (class 2606 OID 16434)
+-- Name: tradesmans_commissions tradesmans_commissions_worker_id_key; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.tradesmans_commissions
+    ADD CONSTRAINT tradesmans_commissions_worker_id_key UNIQUE (worker_id);
+
+
+--
+-- TOC entry 2723 (class 2606 OID 16436)
+-- Name: workers workers_pkey; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.workers
+    ADD CONSTRAINT workers_pkey PRIMARY KEY (id);
+
+
+-- Completed on 2019-06-06 18:49:51
+
+--
+-- PostgreSQL database dump complete
+--
+
