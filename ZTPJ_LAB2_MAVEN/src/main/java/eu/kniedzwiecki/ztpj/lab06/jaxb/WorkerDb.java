@@ -1,14 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package eu.kniedzwiecki.ztpj.lab06.jaxb;
 
-import eu.kniedzwiecki.ztpj.lab02.entities.Worker;
+import eu.kniedzwiecki.ztpj.lab02.entities.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 
 
@@ -21,7 +17,11 @@ public class WorkerDb {
 		return workers;
 	}
 
-	@XmlElement(name="data")
+	@XmlElements({
+            @XmlElement(name = "worker", type = Worker.class),
+            @XmlElement(name = "director", type = Director.class),
+            @XmlElement(name = "salesman", type = Salesman.class)
+    })
 	public void setWorkers(List<Worker> workers) {
 		this.workers = workers;
 	}

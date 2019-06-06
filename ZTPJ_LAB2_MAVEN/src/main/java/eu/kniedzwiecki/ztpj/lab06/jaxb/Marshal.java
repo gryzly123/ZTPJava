@@ -10,6 +10,10 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.*;
@@ -32,13 +36,13 @@ public class Marshal {
 		}
 	}
 	
-	public static void MarshallWorkers(WorkerDb t, FileWriter xmlWriter) throws PropertyException, JAXBException
+	public static void MarshallWorkers(WorkerDb t, Writer xmlWriter) throws PropertyException, JAXBException
 	{
 		init();
 		marshaller.marshal(t, xmlWriter);
 	}
 	
-	public static WorkerDb UnmarshallWorkers(FileReader xmlReader) throws PropertyException, JAXBException
+	public static WorkerDb UnmarshallWorkers(Reader xmlReader) throws PropertyException, JAXBException
 	{
 		init();
 		return (WorkerDb)unmarshaller.unmarshal(xmlReader);
@@ -52,5 +56,15 @@ public class Marshal {
 	public static FileReader CreateReader(String filename) throws FileNotFoundException
 	{
 		return new FileReader("./" + filename);
+	}
+	
+	public static StringWriter CreateWriterStr()
+	{
+		return new StringWriter();
+	}
+	
+	public static StringReader CreateReaderStr(String fromString)
+	{
+		return new StringReader(fromString);
 	}
 }
