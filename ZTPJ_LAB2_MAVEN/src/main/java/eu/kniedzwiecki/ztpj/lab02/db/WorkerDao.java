@@ -106,8 +106,8 @@ public class WorkerDao
 					if(result2.next())
 					{
 						Director d = (Director)worker;
-						d.businessAllowance = Integer.parseInt(result2.getString("business_allowance"));
-						d.monthlyCostLimit = Integer.parseInt(result2.getString("monthly_cost_limit"));
+						d.setBusinessAllowance(Integer.parseInt(result2.getString("business_allowance")));
+						d.setMonthlyCostLimit(Integer.parseInt(result2.getString("monthly_cost_limit")));
 					}
 					result2.close();
 					///psGetWorker.close();
@@ -120,8 +120,8 @@ public class WorkerDao
 					if(result3.next())
 					{
 						Salesman s = (Salesman)worker;
-						s.commisionPercentage = Integer.parseInt(result3.getString("commission"));
-						s.commisionLimit = Integer.parseInt(result3.getString("monthly_commission_limit"));
+						s.setCommisionPercentage(Integer.parseInt(result3.getString("commission")));
+						s.setCommisionLimit(Integer.parseInt(result3.getString("monthly_commission_limit")));
 					}
 					result3.close();
 					//psGetSalesman.close();
@@ -190,8 +190,8 @@ public class WorkerDao
 				case Director:
 					if(psInsertDirector == null) psInsertDirector = c.prepareStatement(insertDirector);
 					psInsertDirector.setInt(1, t.getId());
-					psInsertDirector.setInt(2, ((Director)t).businessAllowance);
-					psInsertDirector.setInt(3, ((Director)t).monthlyCostLimit);
+					psInsertDirector.setInt(2, ((Director)t).getBusinessAllowance());
+					psInsertDirector.setInt(3, ((Director)t).getMonthlyCostLimit());
 					int result2 = psInsertDirector.executeUpdate();
 					if(result2 == 0) throw new Exception("insert director sql failed");
 					break;
@@ -199,8 +199,8 @@ public class WorkerDao
 				case Salesman:
 					if(psInsertSalesman == null) psInsertSalesman = c.prepareStatement(insertSalesman);
 					psInsertSalesman.setInt(1, t.getId());
-					psInsertSalesman.setInt(2, ((Salesman)t).commisionLimit);
-					psInsertSalesman.setInt(3, ((Salesman)t).commisionPercentage);
+					psInsertSalesman.setInt(2, ((Salesman)t).getCommisionLimit());
+					psInsertSalesman.setInt(3, ((Salesman)t).getCommisionPercentage());
 					int result3 = psInsertSalesman.executeUpdate();
 					if(result3 == 0) throw new Exception("insert salesman sql failed");
 					break;

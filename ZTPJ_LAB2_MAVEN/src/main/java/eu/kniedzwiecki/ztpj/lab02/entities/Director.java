@@ -1,10 +1,34 @@
 package eu.kniedzwiecki.ztpj.lab02.entities;
 
 import java.util.Scanner;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
+@XmlRootElement(name = "director")
+@XmlType(propOrder = { "businessAllowance", "monthlyCostLimit"})
 public class Director extends Worker
 {
-	public int businessAllowance, monthlyCostLimit;
+
+	public int getBusinessAllowance() {
+		return businessAllowance;
+	}
+
+	public int getMonthlyCostLimit() {
+		return monthlyCostLimit;
+	}
+
+	@XmlAttribute
+	public void setBusinessAllowance(int businessAllowance) {
+		this.businessAllowance = businessAllowance;
+	}
+
+	@XmlAttribute
+	public void setMonthlyCostLimit(int monthlyCostLimit) {
+		this.monthlyCostLimit = monthlyCostLimit;
+	}
+	private int businessAllowance;
+	private int monthlyCostLimit;
 	
 	public Director()
 	{
@@ -16,18 +40,18 @@ public class Director extends Worker
 		super.readFromStream(s);
 
 		System.out.print("Dodatek sluzbowy:\t\t");
-		businessAllowance = s.nextInt();
+		setBusinessAllowance(s.nextInt());
 		
 		System.out.print("Miesieczny limit kosztow:\t\t");
-		monthlyCostLimit = s.nextInt();
+		setMonthlyCostLimit(s.nextInt());
 	}
 	
 	public String toString()
 	{
 		return super.toString()
 				+ "\nDodatek sluzbowy:\t\t"
-				+ Integer.toString(businessAllowance)
+				+ Integer.toString(getBusinessAllowance())
 				+ "\nMiesieczny limit kosztow:\t\t"
-				+ Integer.toString(monthlyCostLimit);
+				+ Integer.toString(getMonthlyCostLimit());
 	}
 }
